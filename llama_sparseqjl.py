@@ -225,6 +225,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="meta-llama/Llama-2-7b-hf")
     parser.add_argument('--qjl', type=bool, default=False)
+    parser.add_argument('--wbits', type=int, default=16)
     parser.add_argument('--dtype', type=str, default="float16", choices=["float16", "float32"])
     parser.add_argument('--key_quantization_bits', type=int, default=256)
     parser.add_argument('--key_quantization_bits_initial_layers', type=int, default=512)
@@ -323,6 +324,11 @@ def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
             gpts = {}
             for name in subset:
                 gpts[name] = SparseGPT(subset[name])
+                if args.wbits < 16:
+                    gpts[name].quantizer = Quantizer()
+                    gpts[name].quantizer.configure(
+                        args.wbits, perchannel=True, sym=False, mse=False
+                    )
                 
             def add_batch(name):
                 def tmp(_, inp, out):
