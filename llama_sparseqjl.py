@@ -236,7 +236,7 @@ def parse_args(args=None):
     parser.add_argument('--buffer_size', type=int, default=128)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--n_data', type=int, default=150)
-    parser.add_argument('--sparsity', type=float, default=0.5)
+    parser.add_argument('--sparsity', type=float, default=0)
     parser.add_argument('--blocksize', type=int, default=128)
     return parser.parse_args(args)
 
