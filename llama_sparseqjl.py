@@ -28,16 +28,24 @@ from torch.cuda.amp import autocast
 
 
 def set_seed(seed):
+    '''
+    For reproducibility
+    '''
     np.random.seed(seed)
     torch.random.manual_seed(seed)
     
 def get_tokenizer(model):
+    '''
+    Fetch respective model tokenizer from HuggingFace
+    '''
     tokenizer = AutoTokenizer.from_pretrained(model)
     tokenizer.pad_token = tokenizer.eos_token  # Explicitly set pad_token
     return tokenizer
 
 def get_wikitext2(nsamples, seed, seqlen, model, tokenizer):
-    
+    '''
+    Prepare Wikitext2 dataset
+    '''
     traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 
@@ -56,6 +64,9 @@ def get_wikitext2(nsamples, seed, seqlen, model, tokenizer):
     return trainloader, testenc
     
 def get_ptb(nsamples, seed, seqlen, model, tokenizer):
+    '''
+    Prepare PTB dataset
+    '''
     traindata = load_dataset('ptb_text_only', 'penn_treebank', split='train', trust_remote_code=True)
     testdata = load_dataset('ptb_text_only', 'penn_treebank', split='test', trust_remote_code=True)
 
@@ -74,6 +85,9 @@ def get_ptb(nsamples, seed, seqlen, model, tokenizer):
     return trainloader, testenc
 
 def get_c4(nsamples, seed, seqlen, model, tokenizer):
+    '''
+    Prepare C4 dataset
+    '''
     traindata = load_dataset(
         'allenai/c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train'
     )
@@ -108,6 +122,9 @@ def get_c4(nsamples, seed, seqlen, model, tokenizer):
 
 
 def seed_everything(seed):
+    '''
+    For reproducibility
+    '''
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     np.random.seed(seed)
@@ -117,6 +134,9 @@ def seed_everything(seed):
     torch.cuda.manual_seed_all(seed)
     
 def get_loaders(name, nsamples=128, seed=0, seqlen=2048, model=''):
+    '''
+    Fetch respective loaders
+    '''
     tokenizer = get_tokenizer(model)
     if 'wikitext2' in name:
         return get_wikitext2(nsamples, seed, seqlen, model, tokenizer)
@@ -139,6 +159,9 @@ def setup_model_and_tokenizer(
         group_size=32,
         buffer_size=128,
 ):
+    '''
+    Fetch respective llama models according to args
+    '''
     device = 'cuda'
     config = LlamaConfig.from_pretrained(model_name)
     config._flash_attn_2_enabled = True
@@ -196,6 +219,9 @@ def setup_model_and_tokenizer(
 
 
 def parse_args(args=None):
+    '''
+    Parse command line arguments
+    '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="meta-llama/Llama-2-7b-hf")
     parser.add_argument('--qjl', type=bool, default=False)
@@ -216,6 +242,9 @@ def parse_args(args=None):
 
 
 def load_configurations(config_dir):
+    '''
+    Load dataset and model configurations
+    '''
     with open(os.path.join(config_dir, 'dataset2maxlen.json')) as f:
         dataset2maxlen = json.load(f)
     with open(os.path.join(config_dir, 'dataset2prompt.json')) as f:
@@ -228,6 +257,9 @@ def load_configurations(config_dir):
 
 @torch.no_grad()
 def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
+    '''
+    SparseGPT implementation for sequential layer weight pruning
+    '''
     print("Starting pruning...")
     model.seqlen = model.config.max_position_embeddings
 
