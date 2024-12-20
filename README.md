@@ -29,9 +29,11 @@ Params:
 Note:
 * `meta-llama/Llama-2-7b-hf`: takes about 20 minutes to run with pruning
 * `meta-llama/Llama-2-13b-hf`: takes about 35 minutes to run with pruning
+
+Example usage:
 ```
 python llama_sparseqjl.py --model_name "meta-llama/Llama-2-7b-hf" \
-    --qjl False \
+    --qjl True \
     --sparsity 0.5 \
     --wbits 4 \
     --dtype "float16"
