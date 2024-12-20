@@ -16,9 +16,6 @@ Set up the QJL kernel:
 python qjl_kernel/setup.py build_ext --inplace
 ```
 
-### Usage
-`python opt_qjl.py facebook/opt-125m c4 --sparsity 0.5 --qjl_ratio 0.5`
-
 ## Test SparseQJL on Llama
 Params:
 * `qjl`: Boolean flag denoting whether or not to apply QJL. Default: `False`
@@ -37,6 +34,23 @@ python llama_sparseqjl.py --model_name "meta-llama/Llama-2-7b-hf" \
     --sparsity 0.5 \
     --wbits 4 \
     --dtype "float16"
+```
+
+## Test SparseQJL on OPT
+Params:
+
+* `qjl`: Boolean flag denoting whether or not to apply QJL. Default: `False`
+* `sparsity`: Float between 0 and 1 denoting \% uniform sparsity with SparseGPT. Default: `0.0`
+* `wbits`: Int denoting the bit-width for weight quantization. We suggest using a value of `4`. Default: `16` (No quant)
+* `dtype`: String denoting standard datatype of model. Options are `float16` and `float32`. Default: `float16`.
+
+Note:
+
+Currently, our implementation of SparseQJL on OPT is still not 100\% refined, hence the extremely high perplexity scores. We will continue to resolve the issue and make updates to this repo. 
+
+Example usage:
+```
+python opt_qjl.py facebook/opt-125m c4 --sparsity 0.5 --qjl_ratio 0.5
 ```
 
 ## Results
