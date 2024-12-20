@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import json
 from tqdm import tqdm
-from transformers import LlamaConfig, AutoTokenizer
+from transformers import LlamaConfig, AutoTokenizer, LlamaForCausalLM
 from datasets import load_dataset
 from model.llama2_utils_qjl import QJLSketch
 from model.llama2_qjl import LlamaForCausalLM_QJL
@@ -128,6 +128,7 @@ def get_loaders(name, nsamples=128, seed=0, seqlen=2048, model=''):
 
 def setup_model_and_tokenizer(
         model_name,
+        qjl=False,
         dtype=torch.float16,
         key_quantization_bits=256,
         key_quantization_bits_initial_layers=512,
@@ -149,42 +150,55 @@ def setup_model_and_tokenizer(
     )
 
     config = LlamaConfig.from_pretrained(model_name)
-    config.attention_dropout = 0.0
-    config.key_quantization_bits = key_quantization_bits
-    config.key_quantization_bits_initial_layers = key_quantization_bits_initial_layers
-    config.initial_layers_count = initial_layers_count
+    model = None
 
-    config.outlier_count_general = outlier_count_general
-    config.outlier_count_initial_layers = outlier_count_initial_layers
+    if qjl:
+        config.attention_dropout = 0.0
+        config.key_quantization_bits = key_quantization_bits
+        config.key_quantization_bits_initial_layers = key_quantization_bits_initial_layers
+        config.initial_layers_count = initial_layers_count
 
-    config.value_quantization_bits = value_quantization_bits
-    config.group_size = group_size
-    config.buffer_size = buffer_size
+        config.outlier_count_general = outlier_count_general
+        config.outlier_count_initial_layers = outlier_count_initial_layers
 
-    generator = torch.Generator(device=torch.device(device))
+        config.value_quantization_bits = value_quantization_bits
+        config.group_size = group_size
+        config.buffer_size = buffer_size
 
-    config.qjl = QJLSketch(dim=(128, config.key_quantization_bits), dim_outlier=256, rot=True, rng=generator)
-    config.qjl_initial_layers = QJLSketch(dim=(128, config.key_quantization_bits_initial_layers), dim_outlier=128,
-                                              rot=True,
-                                              rng=generator)
+        generator = torch.Generator(device=torch.device(device))
 
-    config.use_flash = True
+        config.qjl = QJLSketch(dim=(128, config.key_quantization_bits), dim_outlier=256, rot=True, rng=generator)
+        config.qjl_initial_layers = QJLSketch(dim=(128, config.key_quantization_bits_initial_layers), dim_outlier=128,
+                                                rot=True,
+                                                rng=generator)
 
-    model_qjl = LlamaForCausalLM_QJL.from_pretrained(
-        pretrained_model_name_or_path=model_name,
-        config=config,
-        cache_dir=None,
-        torch_dtype=dtype,
-        low_cpu_mem_usage=True,
-        device_map="auto"
-    )
+        config.use_flash = True
 
-    return model_qjl, tokenizer
+        model = LlamaForCausalLM_QJL.from_pretrained(
+            pretrained_model_name_or_path=model_name,
+            config=config,
+            cache_dir=None,
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+            device_map="auto"
+        )
+    else:
+        model = LlamaForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=model_name,
+            config=config,
+            cache_dir=None,
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+            device_map="auto"
+        )
+
+    return model, tokenizer
 
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="meta-llama/Llama-2-7b-hf")
+    parser.add_argument('--qjl', type=bool, default=False)
     parser.add_argument('--dtype', type=str, default="float16", choices=["float16", "float32"])
     parser.add_argument('--key_quantization_bits', type=int, default=256)
     parser.add_argument('--key_quantization_bits_initial_layers', type=int, default=512)
@@ -196,7 +210,7 @@ def parse_args(args=None):
     parser.add_argument('--buffer_size', type=int, default=128)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--n_data', type=int, default=150)
-    parser.add_argument('--sparse', type=bool, default=True)
+    # parser.add_argument('--sparse', type=bool, default=False)
     parser.add_argument('--sparsity', type=float, default=0.5)
     parser.add_argument('--blocksize', type=int, default=128)
     return parser.parse_args(args)
@@ -434,6 +448,7 @@ def main(args):
     dtype = torch.float16 if args.dtype == "float16" else torch.float32
     model_qjl, tokenizer = setup_model_and_tokenizer(
         args.model_name,
+        args.qjl,
         dtype,
         args.key_quantization_bits,
         args.key_quantization_bits_initial_layers,
