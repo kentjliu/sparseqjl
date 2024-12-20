@@ -20,9 +20,9 @@ import torch
 from datasets import load_dataset
 from transformers import AutoTokenizer, LlamaTokenizer
 
-from sparsegpt import *
-from modelutils import *
-from quant import *
+from utils.sparsegpt import *
+from utils.modelutils import *
+from utils.quant import *
 
 from torch.cuda.amp import autocast
 
@@ -453,14 +453,14 @@ def main(args):
         'wikitext2', nsamples=128, seed=0, model=args.model_name, seqlen=4096, 
     )
     
-    if args.sparse:
-        tick = time.time()
-        llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize)
-        for n, p in model.named_parameters():
-            print(n, torch.mean((p == 0).float()))
-            if 'down_proj' in n:
-                break
-        print(time.time() - tick)
+    # if args.sparse:
+    #     tick = time.time()
+    #     llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize)
+    #     for n, p in model.named_parameters():
+    #         print(n, torch.mean((p == 0).float()))
+    #         if 'down_proj' in n:
+    #             break
+    #     print(time.time() - tick)
     
     for dataset in ["wikitext2", "ptb", "c4"]:
         dataloader, testloader = get_loaders(
