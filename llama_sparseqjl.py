@@ -210,7 +210,6 @@ def parse_args(args=None):
     parser.add_argument('--buffer_size', type=int, default=128)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--n_data', type=int, default=150)
-    # parser.add_argument('--sparse', type=bool, default=False)
     parser.add_argument('--sparsity', type=float, default=0.5)
     parser.add_argument('--blocksize', type=int, default=128)
     return parser.parse_args(args)
@@ -468,14 +467,14 @@ def main(args):
         'wikitext2', nsamples=128, seed=0, model=args.model_name, seqlen=4096, 
     )
     
-    # if args.sparse:
-    #     tick = time.time()
-    #     llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize)
-    #     for n, p in model.named_parameters():
-    #         print(n, torch.mean((p == 0).float()))
-    #         if 'down_proj' in n:
-    #             break
-    #     print(time.time() - tick)
+    if args.sparsity:
+        tick = time.time()
+        llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize)
+        for n, p in model.named_parameters():
+            print(n, torch.mean((p == 0).float()))
+            if 'down_proj' in n:
+                break
+        print(time.time() - tick)
     
     for dataset in ["wikitext2", "ptb", "c4"]:
         dataloader, testloader = get_loaders(
