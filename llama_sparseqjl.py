@@ -464,7 +464,7 @@ def main(args):
     
     for dataset in ["wikitext2", "ptb", "c4"]:
         dataloader, testloader = get_loaders(
-            dataset, seed=0, model=model, seqlen=2048
+            dataset, seed=0, model=args.model_name, seqlen=2048
         )
         print("Dataset:", dataset)
         llama_eval(model, testloader, DEV, dataset, False)
