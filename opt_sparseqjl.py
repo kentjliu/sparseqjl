@@ -50,8 +50,7 @@ def setup_model_and_tokenizer(
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         use_fast=False,
-        trust_remote_code=True,
-        tokenizer_type='llama'
+        trust_remote_code=True
     )
 
     model = None
