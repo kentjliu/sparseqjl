@@ -506,7 +506,7 @@ def main(args):
 
     for dataset in ['wikitext2', 'ptb', 'c4']:
         dataloader, testloader = get_loaders(
-            dataset, seed=args.seed, model=args.model, seqlen=model.seqlen
+            dataset, seed=args.seed, model=args.model_name, seqlen=model.seqlen
         )
         print(dataset)
         opt_eval(model, testloader, DEV, dataset, args.log_wandb)
