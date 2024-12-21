@@ -345,7 +345,7 @@ def opt_eval(model, testenc, dev, dataset: str, log_wandb: bool = False):
                 W.data[torch.abs(W.data) <= thresh] = 0
 
         for j in range(nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, idx=i)[0]
+            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask)[0]
         layers[i] = layer.cpu()
         del layer
         torch.cuda.empty_cache()
@@ -376,18 +376,6 @@ def opt_eval(model, testenc, dev, dataset: str, log_wandb: bool = False):
         nlls.append(neg_log_likelihood)
     ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
     print(f"Perplexity: {ppl.item():3f}")
-
-    mem_alloc = torch.cuda.memory_allocated() / 1024 / 1024 / 1024
-    mem_reserve = torch.cuda.memory_reserved() / 1024 / 1024 / 1024
-    mem_peak = torch.cuda.memory_stats()['active_bytes.all.peak'] / 1024 / 1024 / 1024
-    print('MEMORY INFO')
-    print(f"mem_alloc: {mem_alloc:.5f}, mem_reserved: {mem_reserve:.5f}, mem_peak: {mem_peak:.5f}")
-
-    total_params = sum(p.numel() for p in model.parameters())
-    param_memory = sum(p.numel() * p.element_size() for p in model.parameters()) / 1024 / 1024 / 1024  # Convert to GB
-    print(f"Total Parameters: {total_params:,}")
-    print(f"Memory Taken by Parameters: {param_memory:.4f} GB")
-
     if log_wandb:
          wandb.log({f'{dataset}/perplexity': ppl.item()})
 
