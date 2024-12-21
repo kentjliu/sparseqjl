@@ -216,7 +216,7 @@ def parse_args(args=None):
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="meta-llama/Llama-2-7b-hf")
-    parser.add_argument('--qjl', type=bool, default=False)
+    parser.add_argument('--qjl', action='store_true')
     parser.add_argument('--wbits', type=int, default=16)
     parser.add_argument('--dtype', type=str, default="float16", choices=["float16", "float32"])
     parser.add_argument('--key_quantization_bits', type=int, default=256)

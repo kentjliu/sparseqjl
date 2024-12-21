@@ -53,42 +53,43 @@ def setup_model_and_tokenizer(
     )
 
     model = None
+    
+    # TODO: UNDER WORK
+    # if qjl:
+        # config.attention_dropout = 0.0
+        # config.key_quantization_bits = key_quantization_bits
+        # config.key_quantization_bits_initial_layers = key_quantization_bits_initial_layers
+        # config.initial_layers_count = initial_layers_count
 
-    if qjl:
-        config.attention_dropout = 0.0
-        config.key_quantization_bits = key_quantization_bits
-        config.key_quantization_bits_initial_layers = key_quantization_bits_initial_layers
-        config.initial_layers_count = initial_layers_count
+        # config.outlier_count_general = outlier_count_general
+        # config.outlier_count_initial_layers = outlier_count_initial_layers
 
-        config.outlier_count_general = outlier_count_general
-        config.outlier_count_initial_layers = outlier_count_initial_layers
+        # config.value_quantization_bits = value_quantization_bits
+        # config.group_size = group_size
+        # config.buffer_size = buffer_size
 
-        config.value_quantization_bits = value_quantization_bits
-        config.group_size = group_size
-        config.buffer_size = buffer_size
+        # generator = torch.Generator(device=torch.device(device))
 
-        generator = torch.Generator(device=torch.device(device))
+        # config.qjl = QJLSketch(dim=(128, config.key_quantization_bits), dim_outlier=256, rot=True, rng=generator)
+        # config.qjl_initial_layers = QJLSketch(dim=(128, config.key_quantization_bits_initial_layers), dim_outlier=128,
+        #                                         rot=True,
+        #                                         rng=generator)
 
-        config.qjl = QJLSketch(dim=(128, config.key_quantization_bits), dim_outlier=256, rot=True, rng=generator)
-        config.qjl_initial_layers = QJLSketch(dim=(128, config.key_quantization_bits_initial_layers), dim_outlier=128,
-                                                rot=True,
-                                                rng=generator)
+        # config.use_flash = True
 
-        config.use_flash = True
-
-        model = OPTForCausalLM_JL_Kernel.from_pretrained(
-            pretrained_model_name_or_path=model_name,
-            config=config,
-            cache_dir=None,
-            torch_dtype=dtype,
-            low_cpu_mem_usage=True,
-            device_map="auto"
-        )
-    else:
-        model = OPTForCausalLM.from_pretrained(
-            pretrained_model_name_or_path=model_name,
-            device_map="auto"
-        )
+        # model = OPTForCausalLM_JL_Kernel.from_pretrained(
+        #     pretrained_model_name_or_path=model_name,
+        #     config=config,
+        #     cache_dir=None,
+        #     torch_dtype=dtype,
+        #     low_cpu_mem_usage=True,
+        #     device_map="auto"
+        # )
+    # else:
+    model = OPTForCausalLM.from_pretrained(
+        pretrained_model_name_or_path=model_name,
+        device_map="auto"
+    )
     model.seqlen = model.config.max_position_embeddings
 
     return model, tokenizer
