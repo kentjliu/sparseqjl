@@ -1,3 +1,7 @@
+'''
+Llama 2 with QJL Quantization based off of original HuggingFace implementation and from QJL paper
+'''
+
 import math
 import warnings
 from typing import List, Optional, Tuple
@@ -23,9 +27,6 @@ from model.llama2_utils_qjl import QJLSketch, QJLKeyQuantizer
 from transformers import DynamicCache
 from transformers.modeling_flash_attention_utils import _flash_attention_forward
 
-'''
-Llama 2 with QJL Quantization based off of original implementation and from QJL paper
-'''
 class QJLCache(DynamicCache):
     def __init__(self, num_hidden_layers: int) -> None:
         super().__init__()
