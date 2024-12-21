@@ -46,6 +46,7 @@ def setup_model_and_tokenizer(
     device = 'cuda'
     config = OPTConfig.from_pretrained(model_name)
     config._flash_attn_2_enabled = True
+    print(model_name)
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         use_fast=False,
@@ -492,7 +493,7 @@ def main(args):
     model.eval()
     DEV = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataloader, testloader = get_loaders(
-        args.dataset, nsamples=args.nsamples, seed=args.seed, model=args.model, seqlen=model.seqlen
+        args.dataset, nsamples=args.nsamples, seed=args.seed, model=args.model_name, seqlen=model.seqlen
     )
 
     if (args.sparsity or args.prunen) and not args.gmp:
