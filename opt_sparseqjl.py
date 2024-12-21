@@ -85,6 +85,7 @@ def setup_model_and_tokenizer(
             device_map="auto"
         )
     else:
+        print('here')
         model = OPTForCausalLM.from_pretrained(
             pretrained_model_name_or_path=model_name,
             config=config,
@@ -178,73 +179,6 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
     torch.cuda.manual_seed_all(seed)
 
-# def get_opt(model):
-#     import torch
-#     def skip(*args, **kwargs):
-#         pass
-#     torch.nn.init.kaiming_uniform_ = skip
-#     torch.nn.init.uniform_ = skip
-#     torch.nn.init.normal_ = skip
-#     from transformers import OPTForCausalLM
-#     model = OPTForCausalLM.from_pretrained(model, torch_dtype='auto')
-#     model.seqlen = model.config.max_position_embeddings
-#     # 
-#     return model 
-
-# def get_opt(model_name):
-#     import torch
-#     def skip(*args, **kwargs):
-#         pass
-#     torch.nn.init.kaiming_uniform_ = skip
-#     torch.nn.init.uniform_ = skip
-#     torch.nn.init.normal_ = skip
-
-    
-
-#     # from model.opt_modified import OPTForCausalLM_JL
-#     # model = OPTForCausalLM_JL.from_pretrained(model_name)
-
-#     # from model.opt_modified_2 import OPTForCausalLM2
-    
-#     from model.opt_qjl import OPTForCausalLM_JL_Kernel
-
-#     from transformers import OPTConfig
-#     device = 'cuda'
-    
-#     config = OPTConfig.from_pretrained(model_name)
-#     config.attention_dropout = 0.0
-#     config.key_quantization_bits = 256
-#     config.key_quantization_bits_initial_layers = 512
-#     config.initial_layers_count = 15
-
-#     config.outlier_count_general = 8
-#     config.outlier_count_initial_layers = 8
-
-#     config.value_quantization_bits = 2
-#     config.group_size = 32
-#     config.buffer_size = 128
-
-
-#     head_dim = config.hidden_size // config.num_attention_heads
-
-#     generator = torch.Generator(device=torch.device(device))
-#     config.qjl = QJLSketch(dim=(head_dim, config.key_quantization_bits), dim_outlier=256, rot=True, rng=generator)
-#     config.qjl_initial_layers = QJLSketch(dim=(head_dim, config.key_quantization_bits_initial_layers), dim_outlier=128,
-#                                               rot=True,
-#                                               rng=generator)
-#     config.use_flash = True
-
-#     model = OPTForCausalLM_JL_Kernel.from_pretrained(
-#         pretrained_model_name_or_path=model_name, 
-#         torch_dtype='auto',
-#         config=config,
-#         cache_dir=None,
-#         low_cpu_mem_usage=True,
-#         device_map="auto"
-#     )
-    
-#     model.seqlen = model.config.max_position_embeddings
-#     return model
 
 @torch.no_grad()
 def opt_sequential(model, dataloader, dev):

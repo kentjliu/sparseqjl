@@ -231,6 +231,10 @@ def parse_args(args=None):
     parser.add_argument('--n_data', type=int, default=150)
     parser.add_argument('--sparsity', type=float, default=0)
     parser.add_argument('--blocksize', type=int, default=128)
+    parser.add_argument(
+        '--dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
+        help='Where to extract calibration data from.'
+    )
     return parser.parse_args(args)
 
 
@@ -494,7 +498,7 @@ def main(args):
     model.eval()
     DEV = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataloader, testloader = get_loaders(
-        'wikitext2', nsamples=128, seed=0, model=args.model_name, seqlen=4096, 
+        args.dataset, nsamples=128, seed=0, model=args.model_name, seqlen=4096, 
     )
     
     if args.sparsity:
