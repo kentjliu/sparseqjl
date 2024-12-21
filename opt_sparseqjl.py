@@ -85,7 +85,6 @@ def setup_model_and_tokenizer(
             device_map="auto"
         )
     else:
-        print('here')
         model = OPTForCausalLM.from_pretrained(
             pretrained_model_name_or_path=model_name,
             device_map="auto"
@@ -101,7 +100,8 @@ def parse_args(args=None):
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="facebook/opt-125m")
-    parser.add_argument('--qjl', type=bool, default=False)
+    # parser.add_argument('--qjl', type=bool, default=False)
+    parser.add_argument('--qjl', action='store_true')
     parser.add_argument('--wbits', type=int, default=16)
     parser.add_argument('--dtype', type=str, default="float16", choices=["float16", "float32"])
     parser.add_argument('--key_quantization_bits', type=int, default=256)
