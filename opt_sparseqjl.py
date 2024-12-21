@@ -88,10 +88,6 @@ def setup_model_and_tokenizer(
         print('here')
         model = OPTForCausalLM.from_pretrained(
             pretrained_model_name_or_path=model_name,
-            config=config,
-            cache_dir=None,
-            torch_dtype=dtype,
-            low_cpu_mem_usage=True,
             device_map="auto"
         )
     model.seqlen = model.config.max_position_embeddings
