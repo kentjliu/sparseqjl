@@ -46,7 +46,6 @@ def setup_model_and_tokenizer(
     device = 'cuda'
     config = OPTConfig.from_pretrained(model_name)
     config._flash_attn_2_enabled = True
-    print(model_name)
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         use_fast=False,
@@ -94,6 +93,7 @@ def setup_model_and_tokenizer(
             low_cpu_mem_usage=True,
             device_map="auto"
         )
+    model.seqlen = model.config.max_position_embeddings
 
     return model, tokenizer
 
