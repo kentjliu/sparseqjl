@@ -1,5 +1,4 @@
-# hpml-final
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kentjliu/hpml-final/blob/main/demo.ipynb)
+# SparseQJL
 
 ## Description
 SparseQJL is a large language model compression approach which leverages mathematical properties of the 
@@ -14,6 +13,10 @@ One way you can do this is by running `hugginface-cli login`. When prompted for 
 * `models`: contains code and helper files for qjl tranformers based on original implementations
 * `qjl_kernel`: contains cuda kernels and python config code
 * `utils`: contains helper files for evaluation scripts
+
+## Demo
+For convenience, we have provided a Google Colab Notebook with which you can use to follow along:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kentjliu/test-book/blob/main/demo.ipynb)
 
 ## Setup
 Build the QJL kernel:
