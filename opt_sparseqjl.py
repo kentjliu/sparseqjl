@@ -392,8 +392,6 @@ def main(args):
         assert has_wandb, "wandb not installed try `pip install wandb`"
         wandb.init(config=args)
 
-    print(args)
-
     model_qjl, tokenizer = setup_model_and_tokenizer(
         args.model_name,
         args.qjl,
