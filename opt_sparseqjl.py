@@ -120,7 +120,7 @@ def parse_args(args=None):
     parser.add_argument('--sparsity', type=float, default=0)
     parser.add_argument('--blocksize', type=int, default=128)
     parser.add_argument(
-        'dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
+        '--dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
         help='Where to extract calibration data from.'
     )
     parser.add_argument(
