@@ -26,13 +26,6 @@ from utils.quant import *
 
 from torch.cuda.amp import autocast
 
-
-def set_seed(seed):
-    '''
-    For reproducibility
-    '''
-    np.random.seed(seed)
-    torch.random.manual_seed(seed)
     
 def get_tokenizer(model):
     '''
@@ -172,7 +165,6 @@ def setup_model_and_tokenizer(
         tokenizer_type='llama'
     )
 
-    config = LlamaConfig.from_pretrained(model_name)
     model = None
 
     if qjl:
