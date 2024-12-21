@@ -16,26 +16,41 @@ Set up the QJL kernel:
 python qjl_kernel/setup.py build_ext --inplace
 ```
 
-### Usage
-`python opt_qjl.py facebook/opt-125m c4 --sparsity 0.5 --qjl_ratio 0.5`
+## Test SparseQJL on Llama
+Params:
+* `qjl`: Boolean flag denoting whether or not to apply QJL. Default: `False`
+* `sparsity`: Float between 0 and 1 denoting \% uniform sparsity with SparseGPT. Default: `0.0`
+* `wbits`: Int denoting the bit-width for weight quantization. We suggest using a value of `4`. Default: `16` (No quant)
+* `dtype`: String denoting standard datatype of model. Options are `float16` and `float32`. Default: `float16`.
 
+Note:
+* `meta-llama/Llama-2-7b-hf`: takes about 20 minutes to run with pruning
+* `meta-llama/Llama-2-13b-hf`: takes about 35 minutes to run with pruning
+
+Example usage:
 ```
 python llama_sparseqjl.py --model_name "meta-llama/Llama-2-7b-hf" \
-    --dtype "float16" \
-    --key_quantization_bits 256 \
-    --key_quantization_bits_initial_layers 512 \
-    --initial_layers_count 15 \
-    --outlier_count_general 8 \
-    --outlier_count_initial_layers 8 \
-    --value_quantization_bits 2 \
-    --group_size 32 \
-    --buffer_size 128 \
-    --seed 42 \
-    --dataset_name [dataset_name] \
-    --n_data 150 \
-    --sparse True \
+    --qjl True \
     --sparsity 0.5 \
-    --blocksize 128
+    --wbits 4 \
+    --dtype "float16"
+```
+
+## Test SparseQJL on OPT
+Params:
+
+* `qjl`: Boolean flag denoting whether or not to apply QJL. Default: `False`
+* `sparsity`: Float between 0 and 1 denoting \% uniform sparsity with SparseGPT. Default: `0.0`
+* `wbits`: Int denoting the bit-width for weight quantization. We suggest using a value of `4`. Default: `16` (No quant)
+* `dtype`: String denoting standard datatype of model. Options are `float16` and `float32`. Default: `float16`.
+
+Note:
+
+Currently, our implementation of SparseQJL on OPT is still not 100\% refined, hence the extremely high perplexity scores. We will continue to resolve the issue and make updates to this repo. 
+
+Example usage:
+```
+python opt_qjl.py facebook/opt-125m c4 --sparsity 0.5 --qjl_ratio 0.5
 ```
 
 ## Results
@@ -50,7 +65,7 @@ The following table displays perplexities on selected NLP tasks
 | LLaMA-2-13b           | 6.02           | 8.22    | 76.81    |
 | **QJL**               |                |         |          |
 | LLaMA-2-7b            | 5.12           | 7.10    | 40.58    |
-| LLaMA-2-13b           | 4.58           | 6.57.   | 52.16    |
+| LLaMA-2-13b           | 4.58           | 6.57    | 52.16    |
 | **SparseQJL**         |                |         |          |
 | LLaMA-2-7b            | 6.09           | 9.43    | 491.04   |
 | LLaMA-2-13b           | 5.33           | 8.33    | 85.23    |
