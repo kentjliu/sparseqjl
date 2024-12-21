@@ -16,7 +16,7 @@ One way you can do this is by running `hugginface-cli login`. When prompted for 
 
 ## Demo
 For convenience, we have provided a Google Colab Notebook with which you can use to follow along:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kentjliu/sparseqjl/blob/main/test-book.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]([https://colab.research.google.com/github/kentjliu/sparseqjl/blob/main/test-book.ipynb](https://github.com/kentjliu/sparseqjl/blob/main/test_book.ipynb))
 
 ## Setup
 Build the QJL kernel:
