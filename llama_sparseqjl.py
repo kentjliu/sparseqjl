@@ -312,8 +312,9 @@ def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
         layer = layer.to(dev)
         full = find_layers(layer)
         
-        sequential = [list(full.keys())]
-        
+        # sequential = [list(full.keys())]
+        sequential = [["self_attn.k_proj", "self_attn.v_proj"]]
+
         for names in sequential:
             subset = {n: full[n] for n in names}
             
