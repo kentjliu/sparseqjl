@@ -198,6 +198,7 @@ def setup_model_and_tokenizer(
             device_map="auto"
         )
     else:
+        print('vanilla model')
         model = LlamaForCausalLM.from_pretrained(
             pretrained_model_name_or_path=model_name,
             config=config,
