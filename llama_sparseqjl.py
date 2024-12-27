@@ -478,9 +478,10 @@ def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
 @torch.no_grad()
 def llama_eval(model, testenc, dev,  dataset: str, log_wandb: bool = False):
     print("Evaluating ...")
+    seqlen = 4096
 
     testenc = testenc.input_ids
-    nsamples = testenc.numel() // model.seqlen
+    nsamples = testenc.numel() // seqlen
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
@@ -491,7 +492,7 @@ def llama_eval(model, testenc, dev,  dataset: str, log_wandb: bool = False):
 
     dtype = next(iter(model.parameters())).dtype
     inps = torch.zeros(
-        (nsamples, model.seqlen, model.config.hidden_size), dtype=dtype, device=dev
+        (nsamples, seqlen, model.config.hidden_size), dtype=dtype, device=dev
     )
     cache = {"i": 0, "attention_mask": None}
 
@@ -508,7 +509,7 @@ def llama_eval(model, testenc, dev,  dataset: str, log_wandb: bool = False):
 
     layers[0] = Catcher(layers[0])
     for i in range(nsamples):
-        batch = testenc[:, (i * model.seqlen) : ((i + 1) * model.seqlen)].to(dev)
+        batch = testenc[:, (i * seqlen) : ((i + 1) * seqlen)].to(dev)
         try:
             model(batch)
         except ValueError:
@@ -554,14 +555,14 @@ def llama_eval(model, testenc, dev,  dataset: str, log_wandb: bool = False):
             hidden_states = model.model.norm(hidden_states)
         lm_logits = model.lm_head(hidden_states)
         shift_logits = lm_logits[:, :-1, :].contiguous()
-        shift_labels = testenc[:, (i * model.seqlen) : ((i + 1) * model.seqlen)][:, 1:]
+        shift_labels = testenc[:, (i * seqlen) : ((i + 1) * seqlen)][:, 1:]
         loss_fct = nn.CrossEntropyLoss()
         loss = loss_fct(
             shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1)
         )
-        neg_log_likelihood = loss.float() * model.seqlen
+        neg_log_likelihood = loss.float() * seqlen
         nlls.append(neg_log_likelihood)
-    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
+    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * seqlen))
     print(f"Perplexity: {ppl.item():3f}")
     if log_wandb:
         wandb.log({f"{dataset}/perplexity": ppl.item()})
