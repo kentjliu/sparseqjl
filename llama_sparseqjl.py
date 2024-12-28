@@ -238,6 +238,7 @@ def parse_args(args=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--n_data', type=int, default=150)
     parser.add_argument('--sparsity', type=float, default=0)
+    parser.add_argument('--kvsparsity', type=float, default=0)
     parser.add_argument('--blocksize', type=int, default=128)
     parser.add_argument(
         '--dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
@@ -261,7 +262,7 @@ def load_configurations(config_dir):
 
 
 @torch.no_grad()
-def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
+def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128, kvprune=False):
     '''
     SparseGPT implementation for sequential layer weight pruning
     '''
@@ -320,8 +321,11 @@ def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128):
         layer = layer.to(dev)
         full = find_layers(layer)
         
-        # sequential = [list(full.keys())]
-        sequential = [["self_attn.k_proj", "self_attn.v_proj"]]
+        sequential = [list(full.keys())]
+
+        if kvprune:
+            print('Only pruning k and v')
+            sequential = [["self_attn.k_proj", "self_attn.v_proj"]]
 
         for names in sequential:
             subset = {n: full[n] for n in names}
@@ -605,6 +609,15 @@ def main(args):
         args.dataset, nsamples=128, seed=0, model=args.model_name, seqlen=8192, 
     )
     
+    if args.kvsparsity:
+        tick = time.time()
+        llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize, kvprune=True)
+        for n, p in model.named_parameters():
+            print(n, torch.mean((p == 0).float()))
+            if 'down_proj' in n:
+                break
+        print(time.time() - tick)
+
     if args.sparsity:
         tick = time.time()
         llama_sequential(model, dataloader, DEV, sparsity=args.sparsity, blocksize=args.blocksize)
