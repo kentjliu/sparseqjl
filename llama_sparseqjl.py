@@ -602,7 +602,7 @@ def main(args):
     model.eval()
     DEV = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataloader, testloader = get_loaders(
-        args.dataset, nsamples=128, seed=0, model=args.model_name, seqlen=4096, 
+        args.dataset, nsamples=128, seed=0, model=args.model_name, seqlen=8192, 
     )
     
     if args.sparsity:
