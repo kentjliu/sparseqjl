@@ -155,9 +155,12 @@ def setup_model_and_tokenizer(
     '''
     Fetch respective llama models according to args
     '''
+    model_name = 'meta-llama/Meta-Llama-3-8B'
     device = 'cuda'
     config = LlamaConfig.from_pretrained(model_name)
     config._flash_attn_2_enabled = True
+
+    print(model_name)
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         use_fast=False,
