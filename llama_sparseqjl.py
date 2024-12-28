@@ -159,18 +159,18 @@ def setup_model_and_tokenizer(
     config._flash_attn_2_enabled = True
 
     print(model_name)
-    tokenizer = LlamaTokenizer.from_pretrained(
-        model_name,
-        use_fast=False,
-        trust_remote_code=True,
-        tokenizer_type='llama'
-    )
-    # tokenizer = AutoTokenizer.from_pretrained(
+    # tokenizer = LlamaTokenizer.from_pretrained(
     #     model_name,
     #     use_fast=False,
     #     trust_remote_code=True,
     #     tokenizer_type='llama'
     # )
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name,
+        use_fast=True, # for llama 3
+        trust_remote_code=True,
+        tokenizer_type='llama'
+    )
 
     model = None
 
