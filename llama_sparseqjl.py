@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import json
 from tqdm import tqdm
-from transformers import LlamaConfig, AutoTokenizer, LlamaForCausalLM
+from transformers import LlamaConfig, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
 from datasets import load_dataset
 from model.llama2_utils_qjl import QJLSketch
 from model.llama2_qjl import LlamaForCausalLM_QJL
@@ -18,7 +18,6 @@ import random
 import numpy as np
 import torch
 from datasets import load_dataset
-from transformers import AutoTokenizer, LlamaTokenizer
 
 from utils.sparsegpt import *
 from utils.modelutils import *
@@ -160,12 +159,18 @@ def setup_model_and_tokenizer(
     config._flash_attn_2_enabled = True
 
     print(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(
+    tokenizer = LlamaTokenizer.from_pretrained(
         model_name,
         use_fast=False,
         trust_remote_code=True,
         tokenizer_type='llama'
     )
+    # tokenizer = AutoTokenizer.from_pretrained(
+    #     model_name,
+    #     use_fast=False,
+    #     trust_remote_code=True,
+    #     tokenizer_type='llama'
+    # )
 
     model = None
 
