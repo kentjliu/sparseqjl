@@ -10,6 +10,7 @@ from transformers import LlamaConfig, AutoTokenizer, LlamaForCausalLM, LlamaToke
 from datasets import load_dataset
 from model.llama2_utils_qjl import QJLSketch
 from model.llama2_qjl import LlamaForCausalLM_QJL
+from model.llama3_qjl import Llama3ForCausalLM_QJL
 
 import torch.nn as nn
 
@@ -196,14 +197,25 @@ def setup_model_and_tokenizer(
 
         config.use_flash = True
 
-        model = LlamaForCausalLM_QJL.from_pretrained(
-            pretrained_model_name_or_path=model_name,
-            config=config,
-            cache_dir=None,
-            torch_dtype=dtype,
-            low_cpu_mem_usage=True,
-            device_map="auto"
-        )
+        if "Llama-3" in model_name:
+            print('using qjl llama 3')
+            model = Llama3ForCausalLM_QJL.from_pretrained(
+                pretrained_model_name_or_path=model_name,
+                config=config,
+                cache_dir=None,
+                torch_dtype=dtype,
+                low_cpu_mem_usage=True,
+                device_map="auto"
+            )
+        else:
+            model = LlamaForCausalLM_QJL.from_pretrained(
+                pretrained_model_name_or_path=model_name,
+                config=config,
+                cache_dir=None,
+                torch_dtype=dtype,
+                low_cpu_mem_usage=True,
+                device_map="auto"
+            )
     else:
         print('vanilla model')
         model = LlamaForCausalLM.from_pretrained(
