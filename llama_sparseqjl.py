@@ -278,9 +278,9 @@ def llama_sequential(model, dataloader, dev, sparsity=0.5, blocksize=128, kvprun
     '''
     SparseGPT implementation for sequential layer weight pruning
     '''
-    print('model sequence length: ', model.seq_len)
     print("Starting pruning...")
     model.seqlen = model.config.max_position_embeddings
+    print('model sequence length: ', model.seq_len)
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
