@@ -9,6 +9,8 @@ the scalable deployment of large-scale transformer models with extended context 
 NOTE: to run code, ensure you have a HuggingFace token with the proper permissions for the necessary models.
 One way you can do this is by running `hugginface-cli login`. When prompted for your token, paste it.
 
+Experiments are run on an NVIDIA A100. CUDA 12.4 is needed for the kernel setup.
+
 ## Outline
 * `models`: contains code and helper files for qjl tranformers based on original implementations
 * `qjl_kernel`: contains cuda kernels and python config code
