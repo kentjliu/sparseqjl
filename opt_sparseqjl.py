@@ -234,7 +234,6 @@ def opt_sequential(model, dataloader, dev, kvprune=False):
 
     for i in range(len(layers)):
         layer = layers[i].to(dev)
-        print(layer.name)
 
         subset = find_layers(layer)
         
