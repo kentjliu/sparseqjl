@@ -276,7 +276,7 @@ def opt_sequential(model, dataloader, dev, kvprune=False):
             print('kvprune: ', kvprune)
             print(args.sparsity)
 
-            if args.kvprune:
+            if kvprune:
                 if 'k_proj' in name or 'v_proj' in name:
                     gpts[name].fasterprune(
                         sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
