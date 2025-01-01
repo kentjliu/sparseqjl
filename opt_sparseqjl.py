@@ -116,6 +116,8 @@ def parse_args(args=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--n_data', type=int, default=150)
     parser.add_argument('--sparsity', type=float, default=0)
+    parser.add_argument('--kvsparsity', type=float, default=0)
+
     parser.add_argument('--blocksize', type=int, default=128)
     parser.add_argument(
         '--dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
@@ -178,7 +180,7 @@ def seed_everything(seed):
 
 
 @torch.no_grad()
-def opt_sequential(model, dataloader, dev):
+def opt_sequential(model, dataloader, dev, kvprune=False):
     print('Starting ...')
 
     use_cache = model.config.use_cache
@@ -232,6 +234,7 @@ def opt_sequential(model, dataloader, dev):
 
     for i in range(len(layers)):
         layer = layers[i].to(dev)
+        print(layer.name)
 
         subset = find_layers(layer)
         
@@ -417,6 +420,15 @@ def main(args):
     if (args.sparsity or args.prunen) and not args.gmp:
         tick = time.time()
         opt_sequential(model, dataloader, DEV)
+        for n, p in model.named_parameters():
+            print(n, torch.mean((p == 0).float()))
+            if 'fc2' in n:
+                break
+        print(time.time() - tick)
+
+    if args.kvprune:
+        tick = time.time()
+        opt_sequential(model, dataloader, DEV, kvprune=True)
         for n, p in model.named_parameters():
             print(n, torch.mean((p == 0).float()))
             if 'fc2' in n:
