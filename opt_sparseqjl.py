@@ -260,14 +260,37 @@ def opt_sequential(model, dataloader, dev, kvprune=False):
         for h in handles:
             h.remove()
 
+        # for name in gpts:
+        #     print(i, name)
+        #     print('Pruning ...')
+        #     sparsity = args.sparsity
+        #     gpts[name].fasterprune(
+        #         sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
+        #     )
+        #     gpts[name].free()
+
         for name in gpts:
             print(i, name)
             print('Pruning ...')
-            sparsity = args.sparsity
-            gpts[name].fasterprune(
-                sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
-            )
-            gpts[name].free()
+            sparsity = args.kvsparsity if args.kvsparsity else args.sparsity
+            print('kvprune: ', kvprune)
+            print(args.sparsity)
+
+            if args.kvprune:
+                if 'k_proj' in name or 'v_proj' in name:
+                    gpts[name].fasterprune(
+                        sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
+                    )
+                    gpts[name].free()
+                else:
+                    continue
+            else:
+                # If kvprune is False, prune all layers
+                gpts[name].fasterprune(
+                    sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
+                )
+                gpts[name].free()
+
 
         for j in range(args.nsamples):
             outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask)[0]
