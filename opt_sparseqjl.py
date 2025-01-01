@@ -270,14 +270,12 @@ def opt_sequential(model, dataloader, dev, kvprune=False):
         #     gpts[name].free()
 
         for name in gpts:
-            print(i, name)
-            print('Pruning ...')
             sparsity = args.kvsparsity if args.kvsparsity else args.sparsity
-            print('kvprune: ', kvprune)
-            print(args.sparsity)
 
             if kvprune:
                 if 'k_proj' in name or 'v_proj' in name:
+                    print(i, name)
+                    print('Pruning ...')
                     gpts[name].fasterprune(
                         sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
                     )
@@ -285,7 +283,8 @@ def opt_sequential(model, dataloader, dev, kvprune=False):
                 else:
                     continue
             else:
-                # If kvprune is False, prune all layers
+                print(i, name)
+                print('Pruning ...')
                 gpts[name].fasterprune(
                     sparsity, prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
                 )
