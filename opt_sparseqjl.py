@@ -448,7 +448,7 @@ def main(args):
                 break
         print(time.time() - tick)
 
-    if args.kvprune:
+    if args.kvsparsity:
         tick = time.time()
         opt_sequential(model, dataloader, DEV, kvprune=True)
         for n, p in model.named_parameters():
