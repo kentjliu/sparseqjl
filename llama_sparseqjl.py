@@ -256,6 +256,7 @@ def parse_args(args=None):
         '--dataset', type=str, choices=['wikitext2', 'ptb', 'c4'], default='c4',
         help='Where to extract calibration data from.'
     )
+    parser.add_argument("--save", type=str, default="", help="Path to saved model.")
     return parser.parse_args(args)
 
 
@@ -647,6 +648,9 @@ def main(args):
         print("Dataset:", dataset)
         llama_eval(model, testloader, DEV, dataset, False)
     
+    if args.save:
+        model.save_pretrained(args.save)
+        
 
 if __name__ == "__main__":
     args = parse_args()

@@ -163,6 +163,10 @@ def parse_args(args=None):
        '--log_wandb', action='store_true',
        help='Whether to log to wandb.'
     )
+    parser.add_argument(
+       '--save', type=str, default='',
+       help='Path to saved model.'
+    )
     return parser.parse_args(args)
 
 
@@ -463,6 +467,9 @@ def main(args):
         print(dataset)
         opt_eval(model, testloader, DEV, dataset, args.log_wandb)
 
+
+    if args.save:
+        model.save_pretrained(args.save)
 
 if __name__ == "__main__":
     args = parse_args()
