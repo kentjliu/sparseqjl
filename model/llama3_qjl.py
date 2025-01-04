@@ -142,7 +142,7 @@ class LlamaAttention_QJL(nn.Module):
         if past_key_value is not None:
             kv_seq_len += past_key_value[-1]
         # cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
-        cos, sin = self.rotary_emb(value_states)
+        cos, sin = self.rotary_emb(value_states, position_ids=kv_seq_len)
 
         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
         if past_key_value is not None:
