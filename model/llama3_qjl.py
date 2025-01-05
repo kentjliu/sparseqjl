@@ -49,7 +49,8 @@ class LlamaAttention_QJL(nn.Module):
         self.v_proj = nn.Linear(self.hidden_size, self.num_key_value_heads * self.head_dim, bias=config.attention_bias)
         self.o_proj = nn.Linear(self.num_heads * self.head_dim, self.hidden_size, bias=config.attention_bias)
         
-        self.initial_layers_count = config.initial_layers_count
+        # self.initial_layers_count = config.initial_layers_count
+        self.initial_layers_count = getattr(config, "initial_layers_count", 15)
         
         self.qjl = config.qjl
         self.key_quantization_bits = config.key_quantization_bits
