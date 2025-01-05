@@ -14,6 +14,7 @@ _CONFIG_FOR_DOC = "LlamaConfig"
 from transformers.models.llama.configuration_llama import *
 from transformers.models.llama.modeling_llama import *
 from transformers.modeling_attn_mask_utils import _prepare_4d_causal_attention_mask
+from transformers.modeling_flash_attention_utils import flash_attn_func
 
 from qjl_kernel.new_pack import triton_quantize_and_pack_along_last_dim
 from qjl_kernel.matmul import cuda_quantized_bmm_dynamic
