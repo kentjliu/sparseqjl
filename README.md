@@ -91,3 +91,6 @@ The following table displays perplexities on selected NLP tasks
 | **SparseQJL**         |                |         |          |
 | LLaMA-2-7b            | 6.09           | 9.43    | 491.04   |
 | LLaMA-2-13b           | 5.33           | 8.33    | 85.23    |
+
+## Authors 
+Kent Liu, Hao Zou, Shivan Mukherjee
